@@ -41,6 +41,7 @@ import com.veracode.verademo.utils.Utils;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
@@ -160,13 +161,19 @@ public class UserController {
 			logger.info("Creating the Statement");
 			String sqlQuery = "select username, password, password_hint, created_at, last_login, real_name, blab_name from users where username='"
 					+ username + "' and password='" + md5(password) + "';";
-			sqlStatement = connect.createStatement();
-			logger.info("Execute the Statement");
-			ResultSet result = sqlStatement.executeQuery(sqlQuery);
+			ResultSet result = null;
+			if(!StringUtils.isAlphanumeric(username) || !StringUtils.isAlphanumeric(password)) {
+				logger.info("Invalid input");
+			}
+			else {
+				sqlStatement = connect.createStatement();
+				logger.info("Execute the Statement");
+				result = sqlStatement.executeQuery(sqlQuery);
+			}
 			/* END BAD CODE */
 
 			// Did we find exactly 1 user that matched?
-			if (result.first()) {
+			if (result != null && result.first()) {
 				logger.info("User Found.");
 				// Remember the username as a courtesy.
 				Utils.setUsernameCookie(response, result.getString("username"));

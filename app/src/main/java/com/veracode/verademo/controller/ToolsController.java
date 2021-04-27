@@ -9,6 +9,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -50,20 +51,33 @@ public class ToolsController {
 
 		try {
 			/* START BAD CODE */
-			proc = Runtime.getRuntime().exec(new String[] { "bash", "-c", "ping -c1 " + host });
-			/* END BAD CODE */
-
-			proc.waitFor(5, TimeUnit.SECONDS);
-			InputStreamReader isr = new InputStreamReader(proc.getInputStream());
-			BufferedReader br = new BufferedReader(isr);
-
-			String line;
-
-			while ((line = br.readLine()) != null) {
-				output += line + "\n";
+			boolean isValid = true;
+			for(char c: host.toCharArray()){
+				if(Character.isDigit(c) && c =='.');
+				else{
+					isValid = false;
+					break;
+				}
 			}
+			if(isValid) {
+				proc = Runtime.getRuntime().exec(new String[]{"bash", "-c", "ping -c1 " + host});
+				/* END BAD CODE */
 
-			logger.info(proc.exitValue());
+				proc.waitFor(5, TimeUnit.SECONDS);
+				InputStreamReader isr = new InputStreamReader(proc.getInputStream());
+				BufferedReader br = new BufferedReader(isr);
+
+				String line;
+
+				while ((line = br.readLine()) != null) {
+					output += line + "\n";
+				}
+
+				logger.info(proc.exitValue());
+			}
+			else{
+				output = "Input is invalid.";
+			}
 		} catch (IOException ex) {
 			logger.error(ex);
 		} catch (InterruptedException ex) {
@@ -79,18 +93,25 @@ public class ToolsController {
 		String output = "";
 		Process proc;
 		try {
-			/* START BAD CODE */
-			proc = Runtime.getRuntime().exec(new String[] { "bash", "-c", cmd });
-			/* END BAD CODE */
+			boolean isValid = true;
+			if(!StringUtils.isAlphanumeric(fortuneFile)) isValid = false;
+			if(isValid) {
+				/* START BAD CODE */
+				proc = Runtime.getRuntime().exec(new String[]{"bash", "-c", cmd});
+				/* END BAD CODE */
 
-			proc.waitFor(5, TimeUnit.SECONDS);
-			InputStreamReader isr = new InputStreamReader(proc.getInputStream());
-			BufferedReader br = new BufferedReader(isr);
+				proc.waitFor(5, TimeUnit.SECONDS);
+				InputStreamReader isr = new InputStreamReader(proc.getInputStream());
+				BufferedReader br = new BufferedReader(isr);
 
-			String line;
+				String line;
 
-			while ((line = br.readLine()) != null) {
-				output += line + "\n";
+				while ((line = br.readLine()) != null) {
+					output += line + "\n";
+				}
+			}
+			else{
+				output = "Input is invalid.";
 			}
 		} catch (IOException ex) {
 			logger.error(ex);

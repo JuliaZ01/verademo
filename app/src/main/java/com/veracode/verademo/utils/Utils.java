@@ -1,6 +1,8 @@
 package com.veracode.verademo.utils;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 
 public class Utils {
+
 	private static boolean isConnectionFromHttps() {
 		return System.getenv("CONNECTION_FROM_HTTPS") != null && System.getenv("CONNECTION_FROM_HTTPS").equals("1");
 	}
