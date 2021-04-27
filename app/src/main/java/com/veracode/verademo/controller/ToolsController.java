@@ -93,8 +93,8 @@ public class ToolsController {
 		String output = "";
 		Process proc;
 		try {
-			boolean isValid = true;
-			if(!StringUtils.isAlphanumeric(fortuneFile)) isValid = false;
+			boolean isValid = false;
+			if(fortuneFile.equals("literature") || fortuneFile.equals("riddles")) isValid = true;
 			if(isValid) {
 				/* START BAD CODE */
 				proc = Runtime.getRuntime().exec(new String[]{"bash", "-c", cmd});
