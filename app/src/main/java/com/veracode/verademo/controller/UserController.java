@@ -314,11 +314,17 @@ public class UserController {
 			String sql = "SELECT username FROM users WHERE username = '" + username + "'";
 			Statement statement = connect.createStatement();
 			ResultSet result = statement.executeQuery(sql);
-			if (result.first()) {
-				model.addAttribute("error", "Username '" + username + "' already exists!");
+			if(StringUtils.isAlphanumeric(username)) {
+				if (result.first()) {
+					model.addAttribute("error", "Username '" + username + "' already exists!");
+					return "register";
+				} else {
+					return "register-finish";
+				}
+			}
+			else{
+				model.addAttribute("error",  username + "' is invalid!");
 				return "register";
-			} else {
-				return "register-finish";
 			}
 		} catch (SQLException | ClassNotFoundException ex) {
 			logger.error(ex);
